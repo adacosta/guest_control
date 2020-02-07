@@ -1,0 +1,14 @@
+<h1>Show Device</h1>
+
+<p><%= device.serial_number %></p>
+<p><%= device.family %></p>
+<p><%= device.platform %></p>
+<p><%= device.kind %></p>
+<p><%= device.remote_created_at %></p>
+<p><%= device.state %></p>
+<p><%= device.remote_credential.try &.id %></p>
+<p>
+  <%= link_to("Back", "/devices", class: "btn btn-light btn-sm") -%>
+  <%= link_to("Edit", "/devices/#{device.id}/edit", class: "btn btn-success btn-sm") -%>
+  <%= link_to("Delete", "/devices/#{device.id}?_csrf=#{csrf_token}", "data-method": "delete", "data-confirm": "Are you sure?", class: "btn btn-danger btn-sm") -%>
+</p>

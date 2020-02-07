@@ -1,0 +1,67 @@
+name: guest_control
+version: 0.1.0
+
+authors:
+  - Alan Da Costa <alandacosta@gmail.com>
+
+crystal: 0.32.1
+
+license: UNLICENSED
+
+targets:
+  guest_control:
+    main: src/guest_control.cr
+
+  amber:
+    main: lib/amber/src/amber/cli.cr
+
+dependencies:
+  amber:
+    github: amberframework/amber
+    version: 0.32.0
+    #branch: master
+
+  # granite:
+  #   github: amberframework/granite
+  #   version: ~> 0.18.0
+
+  jennifer:
+    github: imdrasil/jennifer.cr
+
+  sam:
+    github: imdrasil/sam.cr
+
+  quartz_mailer:
+    github: amberframework/quartz-mailer
+    # version: ~> 0.5.3
+
+  jasper_helpers:
+    github: amberframework/jasper-helpers
+    # version: ~> 0.2.5
+
+  pg:
+    github: will/crystal-pg
+    # version: ~> 0.19.0
+
+  citrine-i18n:
+    github: amberframework/citrine-i18n
+    version: 0.4.0
+
+  monocypher:
+    github: konovod/monocypher
+
+  halite:
+    github: icyleaf/halite
+
+  sidekiq:
+    github: mperham/sidekiq.cr
+    branch: master
+
+development_dependencies:
+  # garnet_spec:
+  #   github: amberframework/garnet-spec
+  #   version: 0.2.1
+
+  icr:
+    github: crystal-community/icr
+    branch: master

@@ -1,0 +1,32 @@
+<%- if access_window.errors %>
+  <ul class="errors">
+  <%- access_window.errors.each do |error| %>
+    <li><%= error.to_s %></li>
+  <%- end %>
+  </ul>
+<%- end %>
+
+<%- action = (access_window.id ? "/access_windows/" + access_window.id.to_s : "/access_windows") %>
+<form action="<%= action %>" method="post">
+  <%= csrf_tag %>
+  <%- if access_window.id %>
+  <input type="hidden" name="_method" value="patch" />
+  <%- end %>
+
+  <div class="form-group">
+    <%= label(:guest) -%>
+    <%= select_field(name: "guest_id", collection: Guest.all.to_a.map {|guest| [guest.id, guest.id]}, selected: access_window.guest_id, class: "form-control") -%>
+  </div>
+  <div class="form-group">
+    <%= label(:device) -%>
+    <%= select_field(name: "device_id", collection: Device.all.to_a.map {|device| [device.id, device.id]}, selected: access_window.device_id, class: "form-control") -%>
+  </div>
+  <div class="form-group">
+    <%= input_field(type: :"datetime-local", options: {name: "start_at", value: access_window.start_at, placeholder: "Start_at", class: "form-control"}.to_h) -%>
+  </div>
+  <div class="form-group">
+    <%= input_field(type: :"datetime-local", options: {name: "end_at", value: access_window.end_at, placeholder: "End_at", class: "form-control"}.to_h) -%>
+  </div>
+  <%= submit("Submit", class: "btn btn-success btn-sm") -%>
+  <%= link_to("Back", "/access_windows", class: "btn btn-light btn-sm") -%>
+</form>

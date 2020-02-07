@@ -1,0 +1,39 @@
+secret_key_base: a7MI_5PwWfahFYmclw30tNYHsX8OgJ6nOalhyTmxnKQ
+port: 3000
+name: guest_control
+
+logging:
+  severity: debug
+  colorize: true
+  filter:
+    - password
+    - confirm_password
+  context:
+    - request
+    - session
+    - headers
+    - cookies
+    - params
+
+host: 0.0.0.0
+port_reuse: false
+process_count: 1
+# ssl_key_file:
+# ssl_cert_file:
+redis_url: "redis://localhost:6379"
+database_url: postgres://postgres:enter@db:5432/guest_control_test
+auto_reload: false
+
+# pg:
+#   database: postgres://postgres:enter@db:5432/guest_control_test
+
+session:
+  key: amber.session
+  store: signed_cookie
+  expires: 0
+
+smtp:
+  enabled: false
+
+secrets:
+  description: Store your development secrets credentials and settings here.

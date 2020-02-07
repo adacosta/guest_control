@@ -1,0 +1,73 @@
+type: app
+database: pg
+language: ecr
+model: jennifer
+
+# list of tasks to be run by `amber watch`
+watch:
+  # NOTE: names that match crystal commands are special (e.g. run, spec)
+  run:
+    # commands will be joined with && (join them yourself if need || or ;)
+    build_commands:
+      - mkdir -p bin
+      - crystal build ./src/sidekiq.cr -o bin/sidekiq --error-trace
+      - crystal build ./src/guest_control.cr -o bin/guest_control --error-trace
+    run_commands:
+      - bin/guest_control
+      # - bin/sidekiq
+    include:
+      - ./config/**/*.cr
+      - ./config/environments/*.yml
+      - ./src/**/*.cr
+      - ./src/**/*.ecr
+      - ./src/locales/*.yml
+    # exclude: # NOTE simplistic implementation: (1) enumerate all includes and excludes; (2) return (includes - excludes)
+    #  - ./src/some_irrelevant_file.cr
+  spec:
+    run_commands:
+      - DATABASE_URL=#{DATABASE_TEST_URL} AMBER_ENV=test amber db create migrate
+      - DATABASE_URL=#{DATABASE_TEST_URL} AMBER_ENV=test crystal spec
+    include:
+      - ./spec/**/*.cr
+  npm:
+    build_commands:
+      - npm install --loglevel=error
+    run_commands:
+      - npm run watch
+
+
+
+
+# type: app
+# database: pg
+# language: ecr
+# model: granite
+# watch:
+#   server: # required: the first command for this task is blocking
+#     files:
+#       - ./config/**/*.cr
+#       - ./config/environments/*.yml
+#       - ./src/**/*.cr
+#       - ./src/**/*.ecr
+#       - ./src/locales/*.yml
+#     commands:
+#       - crystal build ./src/guest_control.cr -o bin/guest_control --error-trace
+#       # - bin/guest_control
+
+#   js: # required: these files changes trigger browser reloading
+#     files:
+#       -
+#     commands:
+#       - npm install --loglevel=error
+#       - npm run watch
+
+#   jobs:
+#     files:
+#       - ./config/**/*.cr
+#       - ./config/environments/*.yml
+#       - ./src/**/*.cr
+#       - ./src/locales/*.yml
+#       - ./src/workers/*.cr
+#     commands:
+#       - crystal build ./src/sidekiq.cr -o bin/sidekiq --error-trace
+#       # - bin/sidekiq

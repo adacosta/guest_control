@@ -1,0 +1,11 @@
+<h1>Show Access Window</h1>
+
+<p><%= access_window.guest.try &.id %></p>
+<p><%= access_window.device.try &.id %></p>
+<p><%= access_window.start_at %></p>
+<p><%= access_window.end_at %></p>
+<p>
+  <%= link_to("Back", "/access_windows", class: "btn btn-light btn-sm") -%>
+  <%= link_to("Edit", "/access_windows/#{access_window.id}/edit", class: "btn btn-success btn-sm") -%>
+  <%= link_to("Delete", "/access_windows/#{access_window.id}?_csrf=#{csrf_token}", "data-method": "delete", "data-confirm": "Are you sure?", class: "btn btn-danger btn-sm") -%>
+</p>

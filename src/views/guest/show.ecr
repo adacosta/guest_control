@@ -1,0 +1,10 @@
+<h1>Show Guest</h1>
+
+<p><%= guest.name %></p>
+<p><%= guest.note %></p>
+<p><%= guest.user.try &.id %></p>
+<p>
+  <%= link_to("Back", "/guests", class: "btn btn-light btn-sm") -%>
+  <%= link_to("Edit", "/guests/#{guest.id}/edit", class: "btn btn-success btn-sm") -%>
+  <%= link_to("Delete", "/guests/#{guest.id}?_csrf=#{csrf_token}", "data-method": "delete", "data-confirm": "Are you sure?", class: "btn btn-danger btn-sm") -%>
+</p>

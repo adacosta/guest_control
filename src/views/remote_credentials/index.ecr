@@ -1,0 +1,54 @@
+<div class="row">
+  <div class="col" style="white-space: nowrap;">
+    <h2>Remote Credentials</h2>
+  </div>
+  <div class="col" style="text-align: right;">
+    <a class="btn btn-success btn-sm" href="/remote_credentials/new">New</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="container-fluid" style="padding-bottom: 1em;">
+    <div class="row">
+      <div class="col"><b>Username</b></div>
+      <div class="col"><b>Time Zone</b></div>
+      <div class="col"><b>Account Id</b></div>
+      <div class="col"><b>Actions</b></div>
+    </div>
+    <%- remote_credentials.each do |remote_credential| %>
+      <div class="row">
+        <div class="col"><%= remote_credential.username %></div>
+        <div class="col"><%= remote_credential.time_zone %></div>
+        <div class="col">
+          <p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 6ch;" alt="<%= remote_credential.chamberlain_account_id %>" title="<%= remote_credential.chamberlain_account_id %>">
+            <%= remote_credential.chamberlain_account_id %>
+          </p>
+        </div>
+        <div class="col actions">
+          <span>
+            <%= link_to("Edit", "/remote_credentials/#{remote_credential.id}/edit", class: "btn btn-success btn-sm") -%>
+            <%= link_to("Delete", "/remote_credentials/#{remote_credential.id}?_csrf=#{csrf_token}", "data-method": "delete", "data-confirm": "Are you sure?", class: "btn btn-danger btn-sm") -%>
+          </span>
+        </div>
+      </div>
+      <div class="row" style="padding-top: 1em; padding-bottom: 1em;">
+        <div class="col">
+          <h5>Garage Doors</h5>
+        </div>
+      </div>
+      <div class="row">
+      <%- remote_credential.devices.each do |device| %>
+        <div class="col" id="device-<%= device.id%>">
+          <%= render partial: "device/_card.ecr" %>
+        </div>
+      <%- end %>
+      <script>
+        document.addEventListener("DOMContentLoaded", function(){
+          var remote_credential_id = <%= remote_credential.id %>;
+          Device.createUpdateLoopByRemoteCredentialId(remote_credential_id);
+        });
+      </script>
+    <%- end %>
+  </div>
+</div>
+<script src="/js/device.js"></script>

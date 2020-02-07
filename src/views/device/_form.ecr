@@ -1,0 +1,41 @@
+<div class="card" style="width: 18rem; border: 1px solid black;">
+  <div class="card-img-top" src="..." alt="Card image cap" style="padding-top: 1px; background: black;">
+  <%- if device.nest_share_id %>
+    <iframe type="text/html" frameborder="0" width="286" height="161" src="//video.nest.com/embedded/live/<%= device.nest_share_id %>?autoplay=1" allowfullscreen></iframe>
+  <% end %>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title"><%= device.serial_number %></h5>
+    <h6 class="card-subtitle mb-2 text-muted">
+      <b>Added: </b>
+      <%- if format = Time::Format.new("%Y-%m-%d %k:%M%p", Time::Location.load((device.remote_credential.try &.time_zone) || "UTC")) %>
+        <%= format.format(Time.parse(device.remote_created_at.to_s, "%Y-%m-%d %H:%M:%S", Time::Location::UTC)) %>
+      <% end %>
+    </h6>
+    <%- if device.errors && device.errors.size > 0 %>
+      <ul class="errors">
+      <%- device.errors.each do |error| %>
+        <li><%= error.to_s %></li>
+      <%- end %>
+      </ul>
+    <%- end %>
+    <p class="card-text">
+      <b>Online: </b><%= device.try &.state.try &.as_h["online"] || "false" %><br/>
+      <b>State: </b><%= device.try &.state.try &.as_h["door_state"] %>
+    </p>
+    <%- action = (device.id ? "/devices/" + device.id.to_s : "/devices") %>
+    <form action="<%= action %>" method="post">
+      <%= csrf_tag %>
+      <%- if device.id %>
+        <input type="hidden" name="ic-request" value="true" />
+        <input type="hidden" name="_method" value="patch" />
+      <%- end %>
+      <label for="device-<%= device.id %>-nest_share_id" data-toggle="tooltip" data-placement="top" title="https://home.nest.com/ -> Camera -> Settings -> Device Options -> Camera Sharing -> Copy Id at end of link (after live/)"><b>Nest Share Id</b></label>
+      <input type="text" id="device-<%= device.id %>-nest_share_id" class="form-control" name="nest_share_id" value="<%= device.nest_share_id %>" style="margin-bottom: 1em;">
+      <div class="actions">
+        <%= submit("Submit", class: "btn btn-success btn-sm") -%>
+        <button ic-get-from="/devices/<%= device.id %>" ic-target="#device-<%= device.id %>" class="btn btn-light btn-sm">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

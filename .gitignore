@@ -1,0 +1,15 @@
+/doc/
+/lib/
+/.crystal/
+/.shards/
+/.vscode/
+/tmp/
+.env
+.encryption_key
+production.yml
+.DS_Store
+/bin/
+/node_modules
+/public/dist
+/.postgres
+v8-compile-cache-0/

@@ -1,0 +1,109 @@
+version: '3.6'
+
+x-shared-app-envs: &shared-app-envs
+  # Sidekiq needs REDIS_URL and REDIS_PROVIDER
+  REDIS_URL: redis://redis:6379
+  REDIS_PROVIDER: "REDIS_URL"
+  DATABASE_USER: postgres
+  DATABASE_PASSWORD: enter
+  DATABASE_HOST: db
+  # Leave out the database name (that's configured in development/test.yml)
+  # DATABASE_BASE_URL: postgres://postgres:enter@db:5432
+  # DATABASE_URL: postgres://postgres:enter@db:5432/guest_control_development
+  DATABASE_TEST_URL: postgres://postgres:enter@db:5432/guest_control_test
+  REMOTE_CREDENTIAL_KEY: d6375f7b3a974a63d6375f7b3a974a63d6375f7b3a974a63d6375f7b3a974a63
+
+services:
+  # this runs services in .amber.yml (app and sidekiq worker)
+  app:
+    build: .
+    image: guest_control
+    command: ["./wait-for-it.sh", "db:5432", "--", "amber", "watch"]
+    environment:
+      <<: *shared-app-envs
+    ports:
+      - 3003:3000
+    links:
+      - db
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
+      - nodes:/app/node_modules
+      - shards:/app/lib
+
+  # webpack:
+  #   build: .
+  #   image: guest_control
+  #   environment:
+  #     <<: *shared-app-envs
+  #   command: npm install && npm run watch
+  #   volumes:
+  #     - .:/app
+  #     - nodes:/app/node_modules
+  #     - shards:/app/lib
+
+  sidekiq:
+    build: .
+    image: guest_control
+    command: ["./wait-for-it.sh", "db:5432", "--", "bin/sidekiq"]
+    environment:
+      <<: *shared-app-envs
+    links:
+      - db
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
+      - shards:/app/lib
+
+  migrate:
+    build: .
+    image: guest_control
+    command: ["./wait-for-it.sh", "db:5432", "--", "amber", "db", "migrate"]
+    environment:
+      <<: *shared-app-envs
+    # environment:
+      # Leave out the database name (that's configured in development/test.yml)
+      # DATABASE_BASE_URL: postgres://postgres:enter@db:5432
+      # DATABASE_URL: postgres://postgres:enter@db:5432/guest_control_development
+    volumes:
+      - .:/app
+    links:
+      - db
+    depends_on:
+      - db
+
+  db:
+    image: postgres:12.1-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: enter
+      POSTGRES_DB: guest_control_development
+    volumes:
+      - .postgres:/var/lib/postgresql/data
+    ports:
+      - 5443:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:5.0.7-alpine
+    # "--tcp-backlog 128" prevents a warning for "WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128"
+    command: redis-server --tcp-backlog 128
+    volumes:
+      - .redis:/data
+    ports:
+      - "6879:6379"
+    expose:
+      - 6879
+
+volumes:
+  db:
+  nodes:
+  shards:

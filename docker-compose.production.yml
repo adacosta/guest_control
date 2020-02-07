@@ -1,0 +1,76 @@
+version: '3.6'
+
+services:
+  nginx:
+    image: linuxserver/letsencrypt
+    container_name: letsencrypt
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - URL=gc.thinkspeakcode.com
+      # - SUBDOMAINS=www,
+      - VALIDATION=http
+      - DNSPLUGIN=route53 #optional
+      # - DUCKDNSTOKEN=token #optional
+      # - EMAIL=e-mail #optional
+      # - DHLEVEL=2048 #optional
+      # - ONLY_SUBDOMAINS=false #optional
+      # - EXTRA_DOMAINS=extradomains #optional
+      - STAGING=false #optional
+    volumes:
+      - .:/app
+      - ./config/nginx/production:/config
+    ports:
+      - 443:443
+      - 80:80 #optional
+    restart: unless-stopped
+
+  app:
+    build: .
+    image: guest_control:production
+    command: amber watch
+    environment:
+      DATABASE_URL: postgres://postgres:enter@db:5432/guest_control_production
+      AMBER_ENV: production
+    ports:
+      - 3000:3000
+    links:
+      - db
+    depends_on:
+      - db
+      - nginx
+    volumes:
+      - .:/app
+      - nodes:/app/node_modules
+      - shards:/app/lib
+
+  migrate:
+    build: .
+    image: guest_control:production
+    command: bash -c 'while ! nc -q 1 db 5432 </dev/null; do sleep 1; done && amber db migrate seed'
+    environment:
+      DATABASE_URL: postgres://postgres:enter@db:5432/guest_control_production
+      AMBER_ENV: production
+    volumes:
+      - .:/app
+    links:
+      - db
+    depends_on:
+      - db
+
+  db:
+    image: postgres:12.1-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: enter
+      POSTGRES_DB: guest_control_production
+    volumes:
+      - .postgres:/var/lib/postgres/data
+
+volumes:
+  db:
+  nodes:
+  shards:

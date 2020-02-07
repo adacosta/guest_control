@@ -1,0 +1,38 @@
+<div class="row">
+  <div class="col-sm-11">
+    <h2>Access Windows</h2>
+  </div>
+  <div class="col-sm-1">
+    <a class="btn btn-success btn-sm" href="/access_windows/new">New</a>
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Guest</th>
+        <th>Device</th>
+        <th>Start_at</th>
+        <th>End_at</th>
+        <th>Actions</th>
+      </tr>
+    <tbody>
+    <%- access_windows.each do |access_window| %>
+      <tr>
+        <td><%= access_window.guest.try &.id %></td>
+        <td><%= access_window.device.try &.id %></td>
+        <td><%= access_window.start_at %></td>
+        <td><%= access_window.end_at %></td>
+        <td>
+          <span>
+            <%= link_to("Show", "/access_windows/#{access_window.id}", class: "btn btn-info btn-sm") -%>
+            <%= link_to("Edit", "/access_windows/#{access_window.id}/edit", class: "btn btn-success btn-sm") -%>
+            <%= link_to("Delete", "/access_windows/#{access_window.id}?_csrf=#{csrf_token}", "data-method": "delete", "data-confirm": "Are you sure?", class: "btn btn-danger btn-sm") -%>
+          </span>
+        </td>
+      </tr>
+    <%- end %>
+    </tbody>
+  </table>
+</div>

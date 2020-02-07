@@ -1,0 +1,76 @@
+<link rel="stylesheet" href="/dist/main.bundle.css">
+<style>
+  .door_container {
+    width: 200px;
+    margin: auto;
+    height: 200px;
+  }
+
+  .door_frame {
+    height: 100%;
+    width: 100%;
+    border-left: 4px solid darkgray;
+    border-right: 4px solid darkgray;
+    border-top: 4px solid darkgray;
+    background: darkgray;
+  }
+
+  .door_panel {
+    height: 30%;
+    background: lightgray;
+    margin-bottom: 3.333333%;
+    color: darkgray;
+    font-family: monospace;
+    display: flex;
+    align-items: baseline;
+  }
+
+  .open {
+    background: #96f5aa;
+  }
+
+  .close {
+    background: #f59696;
+  }
+</style>
+
+<br/>
+
+<div class="door_container">
+  <div class="door_frame">
+    <div class="door_panel"></div>
+    <div class="door_panel">
+      <% if next_state_command = device.next_state_command %>
+        <button id='device-<%= device.id %>-next_state_command_button' data-device-id='<%= device.id %>' data-device-next-state='<%= next_state_command %>' class="btn btn btn-sm text-dark bg-light" style="border: 1px dashed red" onclick="Device.changeDeviceState(event)">
+          <%= next_state_command.capitalize %>
+        </button>
+        <h2 style="display: none;" id='device-<%= device.id %>-current_state'>
+        </h2>
+      <% else %>
+        <button style="display: none;" id='device-<%= device.id %>-next_state_command_button' data-device-id='<%= device.id %>' data-device-next-state='<%= next_state_command %>' class="btn btn btn-sm text-dark bg-light" style="border: 1px dashed red" onclick="Device.changeDeviceState(event)">
+        </button>
+        <h2 id='device-<%= device.id %>-current_state'>
+          <%= device.try &.state.try &.as_h["current_state"] || "" %>
+        </h2>
+      <% end %>
+    </div>
+    <div class="door_panel"></div>
+  </div>
+</div>
+
+<p><%= access_window.start_at %></p>
+<p><%= access_window.end_at %></p>
+<p><%= device.serial_number %></p>
+<p><%= device.family %></p>
+<p><%= device.state %></p>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    var device_id = <%= device.id %>;
+    Device.createUpdateLoopByDeviceId(device_id);
+  });
+</script>
+
+<!-- TODO: Split main.bundle for smaller build -->
+<script src="/dist/main.bundle.js"></script>
+<script src="/js/device.js"></script>

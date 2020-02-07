@@ -1,0 +1,16 @@
+<%- active = context.request.path == "/" ? "active" : "" %>
+<li class="nav-item <%= active %>">
+  <a href="/" class="nav-link">Home</a>
+</li>
+<%- active = context.request.path == "/guests" ? "active" : "" %>
+<li class="nav-item <%= active %>">
+  <a class="nav-link" href="/guests">Guests</a>
+</li>
+<%- active = context.request.path == "/remote_credentials" ? "active" : "" %>
+<li class="nav-item <%= active %>">
+  <a class="nav-link" href="/remote_credentials">Remote Credentials</a>
+</li>
+<%- active = context.request.path == "/access_windows" ? "active" : "" %>
+<li class="nav-item <%= active %>">
+  <a class="nav-link" href="/access_windows">Access Windows</a>
+</li>

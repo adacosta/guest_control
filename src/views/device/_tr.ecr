@@ -1,0 +1,33 @@
+<div class="row">
+  <div class="col-md-2">
+    <%- if device.nest_share_id %>
+      <iframe type="text/html" frameborder="0" width="160" height="94" src="//video.nest.com/embedded/live/<%= device.nest_share_id %>?autoplay=1" allowfullscreen></iframe>
+    <% end %>
+  </div>
+  <div class="col"><%= device.serial_number %></div>
+  <div class="col">
+    <%- if format = Time::Format.new("%Y-%m-%d %k:%M%p", Time::Location.load((device.remote_credential.try &.time_zone) || "UTC")) %>
+      <%= format.format(Time.parse(device.remote_created_at.to_s, "%Y-%m-%d %H:%M:%S", Time::Location::UTC)) %>
+    <% end %>
+  </div>
+  <div class="col"><%= device.try &.state.try &.as_h["online"] %></div>
+  <div class="col"><%= device.try &.state.try &.as_h["door_state"] %></div>
+  <div class="col actions">
+    <span>
+      <% if next_state_command = device.next_state_command %>
+        <form action='<%= "/devices/" + device.id.to_s + "/actions" %>' method="post" style="display: inline">
+          <%= csrf_tag %>
+          <input type="hidden" name="action" value="<%= next_state_command %>" />
+          <button class="btn btn btn-sm text-dark bg-light" style="border: 1px solid black">
+            <%= next_state_command.capitalize %>
+          </button>
+        </form>
+      <% end %>
+      <button ic-target="#device-<%= device.id %>" ic-get-from="/devices/<%= device.id %>/edit" class="btn btn-sm btn-success">
+        Edit
+      </button>
+      <%#= link_to("Show", "/devices/#{device.id}", class: "btn btn-info btn-sm") -%>
+      <%= link_to("Delete", "/devices/#{device.id}?_csrf=#{csrf_token}", "data-method": "delete", "data-confirm": "Are you sure?", class: "btn btn-danger btn-sm") -%>
+    </span>
+  </div>
+</div>

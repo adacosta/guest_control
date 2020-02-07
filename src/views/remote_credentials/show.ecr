@@ -1,0 +1,8 @@
+<h1>Remote Credential</h1>
+
+<p><%= remote_credential.username %></p>
+<p>
+  <%= link_to("Back", "/remote_credentials", class: "btn btn-light btn-sm") -%>
+  <%= link_to("Edit", "/remote_credentials/#{remote_credential.id}/edit", class: "btn btn-success btn-sm") -%>
+  <%= link_to("Delete", "/remote_credentials/#{remote_credential.id}?_csrf=#{csrf_token}", "data-method": "delete", "data-confirm": "Are you sure?", class: "btn btn-danger btn-sm") -%>
+</p>

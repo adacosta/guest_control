@@ -1,0 +1,37 @@
+<%- if guest.try &.errors %>
+  <ul class="errors">
+  <%- guest.try &.errors.try &.each do |error| %>
+    <li><%= error.to_s %></li>
+  <%- end %>
+  </ul>
+<%- end %>
+<%- if @validation_errors %>
+  <ul class="errors">
+   <%-  @validation_errors.not_nil!.each do |error| %>
+      <li><%= error.message %></li>
+   <%- end %>
+  </ul>
+<%- end %>
+
+<%- action = (guest.id ? "/guests/" + guest.id.to_s : "/guests") %>
+<form action="<%= action %>" method="post">
+  <%= csrf_tag %>
+  <%- if guest.id %>
+  <input type="hidden" name="_method" value="patch" />
+  <%- end %>
+
+  <label for="note" style="font-weight: bold;">
+    Name
+  </label>
+  <div class="form-group">
+    <%= text_field(name: "name", value: guest.name, placeholder: "Name", class: "form-control") -%>
+  </div>
+  <label for="note" style="font-weight: bold;">
+    Note
+  </label>
+  <div class="form-group">
+    <%= text_area(name: "note", content: guest.note, placeholder: "Note", class: "form-control", size: "30x4") -%>
+  </div>
+  <%= submit("Submit", class: "btn btn-success btn-sm") -%>
+  <%= link_to("Back", "/guests", class: "btn btn-light btn-sm") -%>
+</form>

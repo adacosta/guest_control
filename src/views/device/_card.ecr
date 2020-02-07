@@ -1,0 +1,61 @@
+<div class="card" style="width: 18rem; border: 1px solid black;">
+  <div class="card-img-top" src="..." alt="Card image cap" style="padding-top: 1px; background: black;">
+  <%- if device.nest_share_id %>
+    <iframe type="text/html" frameborder="0" width="286" height="161" src="//video.nest.com/embedded/live/<%= device.nest_share_id %>?autoplay=1" allowfullscreen></iframe>
+  <% end %>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title"><%= device.serial_number %></h5>
+    <h6 class="card-subtitle mb-2 text-muted">
+      <b>Added: </b>
+      <span data-time-zone='<%= device.remote_credential.try &.time_zone || "UTC" %>' id="device-<%= device.id %>-remote_created_at" style="display: none;"><%= Time::Format::ISO_8601_DATE_TIME.format(device.try &.remote_created_at || Time.utc) %></span>
+      <br/>
+      <b>Moved: </b>
+      <!-- Leave blank and let moment.js format update fetched time from websocket -->
+      <span id="device-<%= device.id %>-last_update" style="display: none;"><%= device.try &.state.try &.as_h["last_update"] || "" %></span>
+      <br/>
+      <b>Refreshed: </b>
+      <span id="device-<%= device.id %>-last_status" style="display: none;"><%= device.try &.state.try &.as_h["last_status"] || "" %></span>
+    </h6>
+    <p class="card-text">
+      <b>Online: </b>
+      <span id="device-<%= device.id %>-online">
+        <%= device.try &.state.try &.as_h["online"] || "false" %>
+      </span>
+      <br/>
+      <b>State: </b>
+      <span id="device-<%= device.id %>-door_state">
+        <%= device.try &.state.try &.as_h["door_state"] %>
+      </span>
+    </p>
+    <div class="actions">
+      <div class="row">
+        <div class="col">
+          <% if next_state_command = device.next_state_command %>
+            <button id='device-<%= device.id %>-next_state_command_button' data-device-id='<%= device.id %>' data-device-next-state='<%= next_state_command %>' class="btn btn btn-sm text-dark bg-light" style="border: 1px dashed red" onclick="Device.changeDeviceState(event)">
+              <%= next_state_command.capitalize %>
+            </button>
+          <% end %>
+        </div>
+        <div class="col" style="text-align: right;">
+          <button ic-target="#device-<%= device.id %>" ic-get-from="/devices/<%= device.id %>/edit" class="btn btn-sm btn-success">
+            Edit
+          </button>
+          <%#= link_to("Show", "/devices/#{device.id}", class: "btn btn-info btn-sm") -%>
+          <%= link_to("Delete", "/devices/#{device.id}?_csrf=#{csrf_token}", "data-method": "delete", "data-confirm": "Are you sure?", class: "btn btn-danger btn-sm") -%>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // relative format updated_at on load
+    var id = <%= device.id %>;
+
+    Device.updateTimeToRelative("device-" + id + "-remote_created_at");
+    Device.updateTimeToRelative("device-" + id + "-last_update");
+    Device.updateTimeToRelative("device-" + id + "-last_status");
+  })
+</script>
