@@ -29,7 +29,7 @@ services:
       - db
       - redis
     volumes:
-      - .:/app
+      - .:/app:cached
       - nodes:/app/node_modules
       - shards:/app/lib
 
@@ -56,7 +56,7 @@ services:
       - db
       - redis
     volumes:
-      - .:/app
+      - .:/app:cached
       - shards:/app/lib
 
   migrate:
@@ -70,7 +70,7 @@ services:
       # DATABASE_BASE_URL: postgres://postgres:enter@db:5432
       # DATABASE_URL: postgres://postgres:enter@db:5432/guest_control_development
     volumes:
-      - .:/app
+      - .:/app:cached
     links:
       - db
     depends_on:
@@ -83,7 +83,7 @@ services:
       POSTGRES_PASSWORD: enter
       POSTGRES_DB: guest_control_development
     volumes:
-      - .postgres:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data:delegated
     ports:
       - 5443:5432
     healthcheck:
@@ -97,7 +97,7 @@ services:
     # "--tcp-backlog 128" prevents a warning for "WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128"
     command: redis-server --tcp-backlog 128
     volumes:
-      - .redis:/data
+      - redis:/data:delegated
     ports:
       - "6879:6379"
     expose:
@@ -105,5 +105,6 @@ services:
 
 volumes:
   db:
+  redis:
   nodes:
   shards:

@@ -25,8 +25,8 @@ watch:
     #  - ./src/some_irrelevant_file.cr
   spec:
     run_commands:
-      - DATABASE_URL=#{DATABASE_TEST_URL} AMBER_ENV=test amber db create migrate
-      - DATABASE_URL=#{DATABASE_TEST_URL} AMBER_ENV=test crystal spec
+      - AMBER_ENV=test amber db create migrate
+      - AMBER_ENV=test crystal spec
     include:
       - ./spec/**/*.cr
   npm:
