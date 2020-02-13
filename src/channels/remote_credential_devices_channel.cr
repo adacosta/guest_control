@@ -23,7 +23,7 @@ class RemoteCredentialDevicesChannel < Amber::WebSockets::Channel
         # TODO: Verify user has access to this device :)
         device = Device.find(device_id)
         if device
-          device.transition_door_state
+          device.advance_transition_state
           device.save
 
           ChamberlainGarageDoorActionWorker.async.perform(device.id.not_nil!, action.not_nil!.to_s)
@@ -37,7 +37,7 @@ class RemoteCredentialDevicesChannel < Amber::WebSockets::Channel
             "last_update" => device.state.not_nil!["last_update"].to_s,
             "last_status" => device.state.not_nil!["last_status"].to_s,
             "door_state" => device.state.not_nil!["door_state"].to_s,
-            "next_state_command" => Device.next_state_command(device.state.not_nil!["door_state"].to_s).to_s
+            "next_state_command" => device.next_state_command.to_s
           }
 
           message = {

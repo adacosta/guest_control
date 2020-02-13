@@ -36,7 +36,6 @@ describe GuestControllerTest do
   subject = GuestControllerTest.new
 
   it "renders guest index template" do
-    Guest.clear
     response = subject.get "/guests"
 
     response.status_code.should eq(200)
@@ -44,7 +43,6 @@ describe GuestControllerTest do
   end
 
   it "renders guest show template" do
-    Guest.clear
     model = create_guest
     location = "/guests/#{model.id}"
 
@@ -55,7 +53,6 @@ describe GuestControllerTest do
   end
 
   it "renders guest new template" do
-    Guest.clear
     location = "/guests/new"
 
     response = subject.get location
@@ -65,7 +62,6 @@ describe GuestControllerTest do
   end
 
   it "renders guest edit template" do
-    Guest.clear
     model = create_guest
     location = "/guests/#{model.id}/edit"
 
@@ -76,7 +72,6 @@ describe GuestControllerTest do
   end
 
   it "creates a guest" do
-    Guest.clear
     response = subject.post "/guests", body: guest_params
 
     response.headers["Location"].should eq "/guests"
@@ -85,7 +80,6 @@ describe GuestControllerTest do
   end
 
   it "updates a guest" do
-    Guest.clear
     model = create_guest
     response = subject.patch "/guests/#{model.id}", body: guest_params
 
@@ -95,7 +89,6 @@ describe GuestControllerTest do
   end
 
   it "deletes a guest" do
-    Guest.clear
     model = create_guest
     response = subject.delete "/guests/#{model.id}"
 

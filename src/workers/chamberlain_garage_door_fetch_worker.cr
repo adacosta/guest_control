@@ -26,8 +26,32 @@ class ChamberlainGarageDoorFetchWorker
       devices = garage_doors.fetch
 
       devices_message = Array(Hash(String, String | Int64)).new
+      redis = Redis::PooledClient.new(url: Amber.settings.redis_url)
 
       devices.each do |device|
+
+        # when state command is issued, it can take the remote a little while to update and return the new state
+        # give a 2 second break on open to update the door state from the transition state
+        # give a 12 second break on close because the door has to flash and beep for a while
+        door_state = device.state.not_nil!["door_state"].to_s
+        if ((transition_state = device.transition_state) && (transition_state_at = device.transition_state_at))
+          action_update_delay = 2.seconds
+          if transition_state == "closing"
+            action_update_delay = 10.seconds
+          end
+          Amber.logger.info("Using delay #{action_update_delay}")
+
+          if transition_state_at > (Time.utc - action_update_delay)
+            Amber.logger.info("transition state is newer, using it for door state")
+            Amber.logger.info("current state is #{door_state}; returning update state as #{transition_state}")
+            door_state = transition_state
+          else
+            # clear the transition state values (outside of windows)
+            Amber.logger.info("clearing transition state values")
+            device.update(transition_state: nil, transition_state_at: nil)
+          end
+        end
+
         device_message_item = {
           "id" => device.id.not_nil!,
           "serial_number" => device.serial_number.not_nil!,
@@ -35,8 +59,8 @@ class ChamberlainGarageDoorFetchWorker
           "remote_created_at" => device.remote_created_at.not_nil!.to_s,
           "last_update" => device.state.not_nil!["last_update"].to_s,
           "last_status" => device.state.not_nil!["last_status"].to_s,
-          "door_state" => device.state.not_nil!["door_state"].to_s,
-          "next_state_command" => Device.next_state_command(device.state.not_nil!["door_state"].to_s).to_s
+          "door_state" => door_state,
+          "next_state_command" => device.next_state_command.to_s
         }
         devices_message << device_message_item
 
@@ -51,7 +75,7 @@ class ChamberlainGarageDoorFetchWorker
             "content_type" => "json"
           },
         }
-        redis = Redis::PooledClient.new(url: Amber.settings.redis_url)
+
         # redis = Redis.new(url: Amber.settings.redis_url)
         redis.publish("device_updates:device_id", {sender: "76cfe330-cdb0-4850-a250-7326b1ef0000", msg: message}.to_json)
         Amber.logger.info("Published device update from worker!")
@@ -69,7 +93,6 @@ class ChamberlainGarageDoorFetchWorker
         },
       }
 
-      redis = Redis::PooledClient.new(url: Amber.settings.redis_url)
       # redis = Redis.new(url: Amber.settings.redis_url)
       redis.publish("device_updates:remote_credential_id", {sender: "76cfe330-cdb0-4850-a250-7326b1ef0000", msg: message}.to_json)
       Amber.logger.info("Published all devices from worker!")

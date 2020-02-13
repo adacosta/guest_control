@@ -32,6 +32,10 @@
   .close {
     background: #f59696;
   }
+
+  .btn-command {
+    text-transform: uppercase;
+  }
 </style>
 
 <br/>
@@ -41,16 +45,16 @@
     <div class="door_panel"></div>
     <div class="door_panel">
       <% if next_state_command = device.next_state_command %>
-        <button id='device-<%= device.id %>-next_state_command_button' data-device-id='<%= device.id %>' data-device-next-state='<%= next_state_command %>' class="btn btn btn-sm text-dark bg-light" style="border: 1px dashed red" onclick="Device.changeDeviceState(event)">
+        <button id='device-<%= device.id %>-next_state_command_button' data-device-id='<%= device.id %>' data-device-next-state='<%= next_state_command %>' class="btn btn btn-sm text-dark bg-light btn-command" style="border: 1px dashed red; margin: auto;" onclick="Device.changeDeviceState(event)">
           <%= next_state_command.capitalize %>
         </button>
-        <h2 style="display: none;" id='device-<%= device.id %>-current_state'>
+        <h2 style="display: none; margin: auto;" id='device-<%= device.id %>-current_state'>
         </h2>
       <% else %>
-        <button style="display: none;" id='device-<%= device.id %>-next_state_command_button' data-device-id='<%= device.id %>' data-device-next-state='<%= next_state_command %>' class="btn btn btn-sm text-dark bg-light" style="border: 1px dashed red" onclick="Device.changeDeviceState(event)">
+        <button id='device-<%= device.id %>-next_state_command_button' data-device-id='<%= device.id %>' data-device-next-state='<%= next_state_command %>' class="btn btn btn-sm text-dark bg-light btn-command" style="border: 1px dashed red; margin: auto; display: none;" onclick="Device.changeDeviceState(event)">
         </button>
-        <h2 id='device-<%= device.id %>-current_state'>
-          <%= device.try &.state.try &.as_h["current_state"] || "" %>
+        <h2 id='device-<%= device.id %>-current_state' style="margin: auto;">
+          <%= device.try &.state.try &.as_h["door_state"] || "" %>
         </h2>
       <% end %>
     </div>
@@ -58,16 +62,10 @@
   </div>
 </div>
 
-<p><%= access_window.start_at %></p>
-<p><%= access_window.end_at %></p>
-<p><%= device.serial_number %></p>
-<p><%= device.family %></p>
-<p><%= device.state %></p>
-
 <script>
   document.addEventListener("DOMContentLoaded", function(){
     var device_id = <%= device.id %>;
-    Device.createUpdateLoopByDeviceId(device_id);
+    Device.createUpdateLoopByDeviceIdWithTabVisibilityDetection(device_id);
   });
 </script>
 

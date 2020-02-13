@@ -37,7 +37,6 @@ describe AccessWindowControllerTest do
   subject = AccessWindowControllerTest.new
 
   it "renders access_window index template" do
-    AccessWindow.clear
     response = subject.get "/access_windows"
 
     response.status_code.should eq(200)
@@ -45,7 +44,6 @@ describe AccessWindowControllerTest do
   end
 
   it "renders access_window show template" do
-    AccessWindow.clear
     model = create_access_window
     location = "/access_windows/#{model.id}"
 
@@ -56,7 +54,6 @@ describe AccessWindowControllerTest do
   end
 
   it "renders access_window new template" do
-    AccessWindow.clear
     location = "/access_windows/new"
 
     response = subject.get location
@@ -66,7 +63,6 @@ describe AccessWindowControllerTest do
   end
 
   it "renders access_window edit template" do
-    AccessWindow.clear
     model = create_access_window
     location = "/access_windows/#{model.id}/edit"
 
@@ -77,7 +73,6 @@ describe AccessWindowControllerTest do
   end
 
   it "creates a access_window" do
-    AccessWindow.clear
     response = subject.post "/access_windows", body: access_window_params
 
     response.headers["Location"].should eq "/access_windows"
@@ -86,7 +81,6 @@ describe AccessWindowControllerTest do
   end
 
   it "updates a access_window" do
-    AccessWindow.clear
     model = create_access_window
     response = subject.patch "/access_windows/#{model.id}", body: access_window_params
 
@@ -96,7 +90,6 @@ describe AccessWindowControllerTest do
   end
 
   it "deletes a access_window" do
-    AccessWindow.clear
     model = create_access_window
     response = subject.delete "/access_windows/#{model.id}"
 

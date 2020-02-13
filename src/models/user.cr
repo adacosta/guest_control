@@ -55,10 +55,11 @@ class User < Jennifer::Model::Base
   private getter new_password : String?
 
   private def email_present : Bool
-    if @email && @email.not_nil!.empty?
-      return true
-    end
-    errors.add(:email, "is blank")
-    return false
+    # if @email && @email.not_nil!.empty?
+    #   return true
+    # end
+    # errors.add(:email, "is blank")
+    # return false
+    (_email = email) ? !_email.empty? : false
   end
 end

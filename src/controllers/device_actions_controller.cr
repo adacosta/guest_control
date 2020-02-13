@@ -7,8 +7,6 @@ class DeviceActionsController < ApplicationController
   def create
     device = Device.find(params[:device_id])
     if device
-      device.transition_door_state
-      device.save
       Amber.logger.info("DeviceActionsController#create - device: #{device.inspect}")
 
       ChamberlainGarageDoorActionWorker.async.perform(device.id.not_nil!, params[:action].not_nil!)

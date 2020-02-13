@@ -5,6 +5,8 @@ CREATE TABLE devices (
   family VARCHAR,
   platform VARCHAR,
   kind VARCHAR,
+  transition_state VARCHAR,
+  transition_state_at TIMESTAMP,
   state JSON,
   remote_credential_id BIGINT,
   remote_created_at TIMESTAMP,

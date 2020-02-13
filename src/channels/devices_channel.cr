@@ -19,8 +19,10 @@ class DevicesChannel < Amber::WebSockets::Channel
         # TODO: Verify user has access to this device :)
         device = Device.find(device_id)
         if device
-          device.transition_door_state
+          Amber.logger.info("ddevice currently: #{device.inspect}")
+          device.advance_transition_state
           device.save
+          Amber.logger.info("device after transition: #{device.inspect}")
 
           ChamberlainGarageDoorActionWorker.async.perform(device.id.not_nil!, action.not_nil!.to_s)
 
@@ -33,7 +35,7 @@ class DevicesChannel < Amber::WebSockets::Channel
             "last_update" => device.state.not_nil!["last_update"].to_s,
             "last_status" => device.state.not_nil!["last_status"].to_s,
             "door_state" => device.state.not_nil!["door_state"].to_s,
-            "next_state_command" => Device.next_state_command(device.state.not_nil!["door_state"].to_s).to_s
+            "next_state_command" => device.next_state_command.to_s
           }
 
           message = {
@@ -56,7 +58,18 @@ class DevicesChannel < Amber::WebSockets::Channel
       if topic_id
         if device = Device.find(topic_id)
           if remote_credential_id = device.remote_credential_id
-            ChamberlainGarageDoorFetchWorker.async.perform(remote_credential_id.to_i64)
+            # if device updated not updated within N seconds, request the fetch
+            if (device.updated_at && device.updated_at.not_nil! < Time.utc - 2.seconds) || device.updated_at.nil?
+            # ensure request for device also hasn't been made
+              requests_count = Request.
+                where { sql("created_at > (NOW()+ '2 seconds'::interval)") & (_remote_credential_id == remote_credential_id) }.
+                count
+              if requests_count && requests_count == 0
+                ChamberlainGarageDoorFetchWorker.async.perform(remote_credential_id.to_i64)
+              else
+                Amber.logger.info("Skipping door fetch request (too recent); request_count = #{requests_count.to_s}")
+              end
+            end
           end
         end
       end

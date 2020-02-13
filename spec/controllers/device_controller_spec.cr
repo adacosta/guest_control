@@ -40,7 +40,6 @@ describe DeviceControllerTest do
   subject = DeviceControllerTest.new
 
   it "renders device index template" do
-    Device.clear
     response = subject.get "/devices"
 
     response.status_code.should eq(200)
@@ -48,7 +47,6 @@ describe DeviceControllerTest do
   end
 
   it "renders device show template" do
-    Device.clear
     model = create_device
     location = "/devices/#{model.id}"
 
@@ -59,7 +57,6 @@ describe DeviceControllerTest do
   end
 
   it "renders device new template" do
-    Device.clear
     location = "/devices/new"
 
     response = subject.get location
@@ -69,7 +66,6 @@ describe DeviceControllerTest do
   end
 
   it "renders device edit template" do
-    Device.clear
     model = create_device
     location = "/devices/#{model.id}/edit"
 
@@ -80,7 +76,6 @@ describe DeviceControllerTest do
   end
 
   it "creates a device" do
-    Device.clear
     response = subject.post "/devices", body: device_params
 
     response.headers["Location"].should eq "/devices"
@@ -89,7 +84,6 @@ describe DeviceControllerTest do
   end
 
   it "updates a device" do
-    Device.clear
     model = create_device
     response = subject.patch "/devices/#{model.id}", body: device_params
 
@@ -99,7 +93,6 @@ describe DeviceControllerTest do
   end
 
   it "deletes a device" do
-    Device.clear
     model = create_device
     response = subject.delete "/devices/#{model.id}"
 

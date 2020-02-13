@@ -30,7 +30,7 @@ Amber::Server.configure do
   end
 
   routes :web do
-    resources "access_windows", AccessWindowController
+    resources "access_windows", AccessWindowController, only: [:edit, :update, :destroy, :show]
     resources "devices", DeviceController, only: [:index, :show, :edit, :update, :destroy]
     patch "devices/:id", DeviceController, :update
     resources "remote_credentials", RemoteCredentialsController
@@ -38,6 +38,10 @@ Amber::Server.configure do
     post "/devices/:device_id/actions", DeviceActionsController, :create
 
     resources "guests", GuestController
+    # access_windows are split like rails shallow routing with the defined resource and next 3 lines
+    get "/guests/:guest_id/access_windows", AccessWindowController, :index
+    get "/guests/:guest_id/access_windows/new", AccessWindowController, :new
+    post "/guests/:guest_id/access_window", AccessWindowController, :create
     get "/w/:slug", GuestDeviceController, :show
     get "/profile", UserController, :show
     get "/profile/edit", UserController, :edit

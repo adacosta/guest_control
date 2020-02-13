@@ -14,12 +14,8 @@
   <%- end %>
 
   <div class="form-group">
-    <%= label(:guest) -%>
-    <%= select_field(name: "guest_id", collection: Guest.all.to_a.map {|guest| [guest.id, guest.id]}, selected: access_window.guest_id, class: "form-control") -%>
-  </div>
-  <div class="form-group">
     <%= label(:device) -%>
-    <%= select_field(name: "device_id", collection: Device.all.to_a.map {|device| [device.id, device.id]}, selected: access_window.device_id, class: "form-control") -%>
+    <%= select_field(name: "device_id", collection: Device.all.to_a.map {|device| [device.id, device.serial_number]}, selected: access_window.device_id, class: "form-control") -%>
   </div>
   <div class="form-group">
     <%= input_field(type: :"datetime-local", options: {name: "start_at", value: access_window.start_at, placeholder: "Start_at", class: "form-control"}.to_h) -%>

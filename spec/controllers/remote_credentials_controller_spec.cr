@@ -36,7 +36,6 @@ describe RemoteCredentialsControllerTest do
   subject = RemoteCredentialsControllerTest.new
 
   it "renders remote_credentials index template" do
-    RemoteCredential.clear
     response = subject.get "/remote_credentials"
 
     response.status_code.should eq(200)
@@ -44,7 +43,6 @@ describe RemoteCredentialsControllerTest do
   end
 
   it "renders remote_credentials show template" do
-    RemoteCredential.clear
     model = create_remote_credentials
     location = "/remote_credentials/#{model.id}"
 
@@ -55,7 +53,6 @@ describe RemoteCredentialsControllerTest do
   end
 
   it "renders remote_credentials new template" do
-    RemoteCredential.clear
     location = "/remote_credentials/new"
 
     response = subject.get location
@@ -65,7 +62,6 @@ describe RemoteCredentialsControllerTest do
   end
 
   it "renders remote_credentials edit template" do
-    RemoteCredential.clear
     model = create_remote_credentials
     location = "/remote_credentials/#{model.id}/edit"
 
@@ -76,7 +72,6 @@ describe RemoteCredentialsControllerTest do
   end
 
   it "creates a remote_credentials" do
-    RemoteCredential.clear
     response = subject.post "/remote_credentials", body: remote_credentials_params
 
     response.headers["Location"].should eq "/remote_credentials"
@@ -85,7 +80,6 @@ describe RemoteCredentialsControllerTest do
   end
 
   it "updates a remote_credentials" do
-    RemoteCredential.clear
     model = create_remote_credentials
     response = subject.patch "/remote_credentials/#{model.id}", body: remote_credentials_params
 
@@ -95,7 +89,6 @@ describe RemoteCredentialsControllerTest do
   end
 
   it "deletes a remote_credentials" do
-    RemoteCredential.clear
     model = create_remote_credentials
     response = subject.delete "/remote_credentials/#{model.id}"
 

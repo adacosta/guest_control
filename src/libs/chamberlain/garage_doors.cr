@@ -10,6 +10,8 @@ module Chamberlain
       devices = Array(Device).new
 
       if @remote_credential
+        # TODO: update all get calls to use an HTTP::Client instance to implement connect_timeout and read_timeout with being/rescue IO::Timeout
+        #   see https://crystal-lang.org/api/0.20.1/HTTP/Client.html for examples
         headers = HTTP::Headers{"Content-Type" => "application/json", "MyQApplicationId" => ::Chamberlain::APP_ID, "SecurityToken" => @remote_credential.chamberlain_security_token.not_nil!}
         if account_id = @remote_credential.chamberlain_account_id
           uri = ::Chamberlain.devices_uri(account_id)

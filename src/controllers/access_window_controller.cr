@@ -1,12 +1,16 @@
+# TODO: Verify access rights
+
 class AccessWindowController < ApplicationController
   getter access_window = AccessWindow.new
+  getter guest = Guest.new
 
   before_action do
+    only [:index, :new, :create] { set_guest }
     only [:show, :edit, :update, :destroy] { set_access_window }
   end
 
   def index
-    access_windows = AccessWindow.all
+    access_windows = AccessWindow.where { _guest_id == @guest.id }
     render "index.ecr"
   end
 
@@ -15,6 +19,7 @@ class AccessWindowController < ApplicationController
   end
 
   def new
+    @access_window = AccessWindow.new({"guest_id" => @guest.id.not_nil!})
     render "new.ecr"
   end
 
@@ -42,35 +47,36 @@ class AccessWindowController < ApplicationController
       "guest_id" => guest_id,
       "device_id" => device_id,
       "start_at" => start_at,
-      "end_at" => end_at
+      "end_at" => end_at,
+      "guest_id" => @guest.id
     }
     access_window = AccessWindow.new(new_params)
     if access_window.save
-      redirect_to action: :index, flash: {"success" => "Access_window has been created."}
+      redirect_to action: :index, flash: {"success" => "Access window has been created."}
     else
-      flash[:danger] = "Could not create AccessWindow!"
+      flash[:danger] = "Could not create Access Window!"
       render "new.ecr"
     end
   end
 
   def update
     access_window.set_attributes access_window_params.validate!
+    access_window.set_attributes(guest_id: @guest.id)
     if access_window.save
-      redirect_to action: :index, flash: {"success" => "Access_window has been updated."}
+      redirect_to action: :index, flash: {"success" => "Access Window has been updated."}
     else
-      flash[:danger] = "Could not update AccessWindow!"
+      flash[:danger] = "Could not update Access Window!"
       render "edit.ecr"
     end
   end
 
   def destroy
     access_window.destroy
-    redirect_to action: :index, flash: {"success" => "Access_window has been deleted."}
+    redirect_to action: :index, flash: {"success" => "Access Window has been deleted."}
   end
 
   private def access_window_params
     params.validation do
-      required :guest_id
       required :device_id
       required :start_at
       required :end_at
@@ -79,6 +85,10 @@ class AccessWindowController < ApplicationController
 
   private def set_access_window
     @access_window = AccessWindow.find! params[:id]
+  end
+
+  private def set_guest
+    @guest = Guest.find! params[:guest_id]
   end
 
   private def format_time(time_string : String, remote_credential : RemoteCredential) : Time
