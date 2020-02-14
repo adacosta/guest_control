@@ -43,7 +43,7 @@ class Device {
 
   // owner control
   static createUpdateLoopByRemoteCredentialId(remote_credential_id) {
-    let socket = new Amber.Socket('/remote_credential_devices');
+    let socket = new Amber.Socket('/ws/remote_credential_devices');
     socket.connect().then((m) => {
 
       window.devicesChannel = socket.channel('device_updates:remote_credential_id:' + remote_credential_id);
@@ -158,7 +158,7 @@ class Device {
 
   // guest control
   static createUpdateLoopByDeviceId(device_id) {
-    let socket = new Amber.Socket('/devices');
+    let socket = new Amber.Socket('/ws/devices');
 
     socket.connect().then((m) => {
       console.log("socket connect");

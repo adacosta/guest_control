@@ -7,10 +7,6 @@ x-shared-app-envs: &shared-app-envs
   DATABASE_USER: postgres
   DATABASE_PASSWORD: enter
   DATABASE_HOST: db
-  # Leave out the database name (that's configured in development/test.yml)
-  # DATABASE_BASE_URL: postgres://postgres:enter@db:5432
-  # DATABASE_URL: postgres://postgres:enter@db:5432/guest_control_development
-  DATABASE_TEST_URL: postgres://postgres:enter@db:5432/guest_control_test
   REMOTE_CREDENTIAL_KEY: d6375f7b3a974a63d6375f7b3a974a63d6375f7b3a974a63d6375f7b3a974a63
 
 services:
@@ -25,6 +21,7 @@ services:
       - 3003:3000
     links:
       - db
+      - redis
     depends_on:
       - db
       - redis
@@ -52,6 +49,7 @@ services:
       <<: *shared-app-envs
     links:
       - db
+      - redis
     depends_on:
       - db
       - redis
@@ -73,8 +71,10 @@ services:
       - .:/app:cached
     links:
       - db
+      - redis
     depends_on:
       - db
+      - redis
 
   db:
     image: postgres:12.1-alpine

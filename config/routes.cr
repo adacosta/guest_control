@@ -53,8 +53,8 @@ Amber::Server.configure do
     post "/registration", RegistrationController, :create
     get "/", HomeController, :index
 
-    websocket "/devices", DevicesSocket
-    websocket "/remote_credential_devices", RemoteCredentialDevicesSocket
+    websocket "/ws/devices", DevicesSocket
+    websocket "/ws/remote_credential_devices", RemoteCredentialDevicesSocket
   end
 
   routes :api do

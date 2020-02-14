@@ -14,8 +14,6 @@ Spec.after_each do
   Jennifer::Adapter.adapter.rollback_transaction
 end
 
-# Micrate::DB.connection_url = ENV['DATABASE_TEST_URL']
-
 # Automatically run migrations on the test database
 # Micrate::Cli.run_up
 # Disable Granite logs in tests

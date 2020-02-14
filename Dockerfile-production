@@ -10,6 +10,8 @@ RUN shards install
 
 COPY . /app
 
-RUN rm -rf /app/node_modules
+RUN npm install . && npm run release
+RUN shards install --production
+RUN shards build guest_control --release
 
-CMD amber watch
+CMD bin/guest_control
