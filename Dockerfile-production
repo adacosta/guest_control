@@ -1,4 +1,4 @@
-FROM amberframework/amber:v0.32.0
+FROM amberframework/amber:v0.31.0
 
 RUN apt-get update -qq -y
 RUN apt-get install libsodium-dev -y
