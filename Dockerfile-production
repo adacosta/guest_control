@@ -18,6 +18,6 @@ RUN shards install --production
 RUN shards build guest_control --release
 
 RUN mkdir -p bin
-RUN crystal build ./src/guest_control.cr -o bin/guest_control --release
+RUN crystal build ./src/guest_control.cr -o bin/guest_control --release --no-debug
 
 CMD sh app-start.sh
