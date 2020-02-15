@@ -17,4 +17,7 @@ RUN npm run release
 RUN shards install --production
 RUN shards build guest_control --release
 
+RUN mkdir -p bin
+RUN crystal build ./src/sidekiq.cr -o bin/sidekiq --release
+
 CMD bin/sidekiq
