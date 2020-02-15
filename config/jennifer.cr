@@ -4,23 +4,36 @@ require "colorize"
 
 # Jennifer::Config.read("config/database.yml", Amber.env.to_s)
 
-Jennifer::Config.configure do |conf|
-  conf.migration_files_path = "db/migrations"
-  conf.host = ENV["DATABASE_HOST"]
-  conf.user = ENV["DATABASE_USER"]
-  conf.password = ENV["DATABASE_PASSWORD"]
-  conf.adapter = "postgres"
-  Amber.logger.info("Amber.env = #{Amber.env}")
-  case Amber.env.to_s
-  when "development"
-    conf.db = "guest_control_development"
-  when "production"
-    conf.db = "guest_control"
-  when "test"
-    conf.db = "guest_control_test"
-  else
-    Amber.logger.info("No database defined for env: '#{Amber.env}'")
+if ENV["DATABASE_URL"]
+  Jennifer::Config.from_uri(ENV["DATABASE_URL"])
+else
+  Jennifer::Config.configure do |conf|
+    if ENV["DATABASE_HOST"]
+      conf.host = ENV["DATABASE_HOST"]
+    end
+    if ENV["DATABASE_USER"]
+      conf.user = ENV["DATABASE_USER"]
+    end
+    if ENV["DATABASE_PASSWORD"]
+      conf.password = ENV["DATABASE_PASSWORD"]
+    end
+    conf.adapter = "postgres"
+    case Amber.env.to_s
+    when "development"
+      conf.db = "guest_control_development"
+    when "production"
+      conf.db = "guest_control"
+    when "test"
+      conf.db = "guest_control_test"
+    else
+      Amber.logger.info("No database defined for env: '#{Amber.env}'")
+    end
   end
+end
+
+Jennifer::Config.configure do |conf|
+  Amber.logger.info("Amber.env = #{Amber.env}")
+  conf.migration_files_path = "db/migrations"
 
   conf.logger = Logger.new(STDOUT)
 
