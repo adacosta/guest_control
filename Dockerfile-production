@@ -3,6 +3,8 @@ FROM amberframework/amber:v0.31.0
 RUN apt-get update -qq -y
 RUN apt-get install libsodium-dev -y
 
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && apt-get install -y nodejs
+
 WORKDIR /app
 
 COPY shard.* /app/
@@ -10,7 +12,8 @@ RUN shards install
 
 COPY . /app
 
-RUN npm install . && npm run release
+RUN npm install .
+RUN npm run release
 RUN shards install --production
 RUN shards build guest_control --release
 
