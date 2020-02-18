@@ -1,5 +1,7 @@
 FROM amberframework/amber:v0.31.0
 
+ARG NODE_ENV=production
+
 RUN apt-get update -qq -y
 RUN apt-get install libsodium-dev -y
 

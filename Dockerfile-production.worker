@@ -20,4 +20,6 @@ RUN shards build guest_control --release
 RUN mkdir -p bin
 RUN crystal build ./src/sidekiq.cr -o bin/sidekiq --release --no-debug
 
+ARG NODE_ENV=production
+
 CMD bin/sidekiq
