@@ -4,7 +4,7 @@ require "colorize"
 
 # Jennifer::Config.read("config/database.yml", Amber.env.to_s)
 
-if ENV["DATABASE_URL"]
+if ENV.has_key?("DATABASE_URL")
   Jennifer::Config.from_uri(ENV["DATABASE_URL"])
 else
   Jennifer::Config.configure do |conf|

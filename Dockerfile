@@ -1,4 +1,6 @@
-FROM amberframework/amber:v0.31.0
+FROM amberframework/amber:0.33.0
+
+RUN echo "Using Dockefile"
 
 RUN apt-get update -qq -y
 RUN apt-get install libsodium-dev -y
@@ -10,6 +12,12 @@ RUN shards install
 
 COPY . /app
 
-RUN rm -rf /app/node_modules
+ENV PATH="/app/node_modules/.bin:${PATH}"
 
-CMD amber watch
+# RUN rm -rf /app/node_modules
+
+# Use abstracted app start because dokku detects the last line in Dockerfile
+#  and uses this value to override the start even if a different Dockerfile
+#  arg is specified in the build; make sure to set AMBER_ENV="production" in dokku
+
+CMD ./app-start.sh

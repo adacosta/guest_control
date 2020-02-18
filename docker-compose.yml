@@ -7,6 +7,7 @@ x-shared-app-envs: &shared-app-envs
   DATABASE_USER: postgres
   DATABASE_PASSWORD: enter
   DATABASE_HOST: db
+  AMBER_ENV: development
   REMOTE_CREDENTIAL_KEY: d6375f7b3a974a63d6375f7b3a974a63d6375f7b3a974a63d6375f7b3a974a63
 
 services:

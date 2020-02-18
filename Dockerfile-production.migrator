@@ -1,6 +1,6 @@
-FROM amberframework/amber:v0.31.0
+FROM amberframework/amber:0.33.0
 
-ARG NODE_ENV=production
+RUN echo "Using Dockefile-production.migrator"
 
 RUN apt-get update -qq -y
 RUN apt-get install libsodium-dev -y
@@ -14,12 +14,15 @@ RUN shards install
 
 COPY . /app
 
-RUN npm install .
-RUN npm run release
+ENV PATH="/app/node_modules/.bin:${PATH}"
+
 RUN shards install --production
 RUN shards build guest_control --release
+RUN npm install .
+# RUN yes | npm install webpack webpack-cli -g
+RUN yes | npm run release
 
 RUN mkdir -p bin
 RUN crystal build ./src/guest_control.cr -o bin/guest_control --release
 
-CMD sh db-migrate.sh
+CMD ./db-migrate.sh
