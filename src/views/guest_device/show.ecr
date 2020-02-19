@@ -1,74 +1,83 @@
-<link rel="stylesheet" href="/dist/main.bundle.css">
-<style>
-  .door_container {
-    width: 200px;
-    margin: auto;
-    height: 200px;
-  }
+<html>
+  <head>
+    <title>Chamberlain Garage Door - Guest Control</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/dist/main.bundle.css">
+    <!-- TODO: Split main.bundle for smaller build -->
+    <script src="/dist/main.bundle.js"></script>
+    <script src="/js/device.js"></script>
+  </head>
+  <body>
+    <style>
+      .door_container {
+        width: 200px;
+        margin: auto;
+        height: 200px;
+      }
 
-  .door_frame {
-    height: 100%;
-    width: 100%;
-    border-left: 4px solid darkgray;
-    border-right: 4px solid darkgray;
-    border-top: 4px solid darkgray;
-    background: darkgray;
-  }
+      .door_frame {
+        height: 100%;
+        width: 100%;
+        border-left: 4px solid darkgray;
+        border-right: 4px solid darkgray;
+        border-top: 4px solid darkgray;
+        background: darkgray;
+      }
 
-  .door_panel {
-    height: 30%;
-    background: lightgray;
-    margin-bottom: 3.333333%;
-    color: darkgray;
-    font-family: monospace;
-    display: flex;
-    align-items: baseline;
-  }
+      .door_panel {
+        height: 30%;
+        background: lightgray;
+        margin-bottom: 3.333333%;
+        color: darkgray;
+        font-family: monospace;
+        display: flex;
+        align-items: baseline;
+      }
 
-  .open {
-    background: #96f5aa;
-  }
+      .open {
+        background: #96f5aa;
+      }
 
-  .close {
-    background: #f59696;
-  }
+      .close {
+        background: #f59696;
+      }
 
-  .btn-command {
-    text-transform: uppercase;
-  }
-</style>
+      .btn-command {
+        text-transform: uppercase;
+      }
+    </style>
 
-<br/>
+    <br/>
 
-<div class="door_container">
-  <div class="door_frame">
-    <div class="door_panel"></div>
-    <div class="door_panel">
-      <% if next_state_command = device.next_state_command %>
-        <button id='device-<%= device.id %>-next_state_command_button' data-device-id='<%= device.id %>' data-device-next-state='<%= next_state_command %>' class="btn btn btn-sm text-dark bg-light btn-command" style="border: 1px dashed red; margin: auto;" onclick="Device.changeDeviceState(event)">
-          <%= next_state_command.capitalize %>
-        </button>
-        <h2 style="display: none; margin: auto;" id='device-<%= device.id %>-current_state'>
-        </h2>
-      <% else %>
-        <button id='device-<%= device.id %>-next_state_command_button' data-device-id='<%= device.id %>' data-device-next-state='<%= next_state_command %>' class="btn btn btn-sm text-dark bg-light btn-command" style="border: 1px dashed red; margin: auto; display: none;" onclick="Device.changeDeviceState(event)">
-        </button>
-        <h2 id='device-<%= device.id %>-current_state' style="margin: auto;">
-          <%= device.try &.state.try &.as_h["door_state"] || "" %>
-        </h2>
-      <% end %>
+    <div class="door_container">
+      <div class="door_frame">
+        <div class="door_panel"></div>
+        <div class="door_panel">
+          <% if next_state_command = device.next_state_command %>
+            <button id='device-<%= device.id %>-next_state_command_button' data-device-id='<%= device.id %>' data-device-next-state='<%= next_state_command %>' class="btn btn btn-sm text-dark bg-light btn-command" style="border: 1px dashed red; margin: auto;" onclick="Device.changeDeviceState(event)">
+              <%= next_state_command.capitalize %>
+            </button>
+            <h2 style="display: none; margin: auto;" id='device-<%= device.id %>-current_state'>
+            </h2>
+          <% else %>
+            <button id='device-<%= device.id %>-next_state_command_button' data-device-id='<%= device.id %>' data-device-next-state='<%= next_state_command %>' class="btn btn btn-sm text-dark bg-light btn-command" style="border: 1px dashed red; margin: auto; display: none;" onclick="Device.changeDeviceState(event)">
+            </button>
+            <h2 id='device-<%= device.id %>-current_state' style="margin: auto;">
+              <%= device.try &.state.try &.as_h["door_state"] || "" %>
+            </h2>
+          <% end %>
+        </div>
+        <div class="door_panel"></div>
+      </div>
     </div>
-    <div class="door_panel"></div>
-  </div>
-</div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function(){
-    var device_id = <%= device.id %>;
-    Device.createUpdateLoopByDeviceIdWithTabVisibilityDetection(device_id);
-  });
-</script>
-
-<!-- TODO: Split main.bundle for smaller build -->
-<script src="/dist/main.bundle.js"></script>
-<script src="/js/device.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function(){
+        var device_id = <%= device.id %>;
+        Device.createUpdateLoopByDeviceIdWithTabVisibilityDetection(device_id);
+      });
+    </script>
+  </body>
+</html>
