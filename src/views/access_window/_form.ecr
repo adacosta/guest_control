@@ -6,7 +6,7 @@
   </ul>
 <%- end %>
 
-<%- action = (access_window.id ? "/access_windows/" + access_window.id.to_s : "/access_windows") %>
+<%- action = (access_window.id ? "/access_windows/" + access_window.id.to_s : "/guests/" + guest.id.to_s + "/access_windows") %>
 <form action="<%= action %>" method="post">
   <%= csrf_tag %>
   <%- if access_window.id %>

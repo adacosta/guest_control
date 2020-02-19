@@ -37,8 +37,9 @@ class AccessWindowController < ApplicationController
     #   params["device_id"] = params["device_id"][0].to_i64
     # end
     # Amber.logger.info("access window params 2 = #{access_window_params.inspect}")
+
     params_hash = access_window_params.validate!
-    guest_id = params_hash["guest_id"].not_nil!.to_i64
+    guest_id = params["guest_id"].not_nil!.to_i64
     device_id = params_hash["device_id"].not_nil!.to_i64
     device = Device.find(device_id)
     start_at = format_time(params_hash["start_at"].not_nil!, device.not_nil!.remote_credential.not_nil!)
@@ -52,7 +53,7 @@ class AccessWindowController < ApplicationController
     }
     access_window = AccessWindow.new(new_params)
     if access_window.save
-      redirect_to action: :index, flash: {"success" => "Access window has been created."}
+      redirect_to "/guests/#{@guest.id}/access_windows", flash: {"success" => "Access window has been created."}
     else
       flash[:danger] = "Could not create Access Window!"
       render "new.ecr"
@@ -84,11 +85,11 @@ class AccessWindowController < ApplicationController
   end
 
   private def set_access_window
-    @access_window = AccessWindow.find! params[:id]
+    @access_window = AccessWindow.find!(params[:id])
   end
 
   private def set_guest
-    @guest = Guest.find! params[:guest_id]
+    @guest = Guest.find!(params["guest_id"].not_nil!.to_i64)
   end
 
   private def format_time(time_string : String, remote_credential : RemoteCredential) : Time

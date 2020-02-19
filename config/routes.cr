@@ -41,7 +41,7 @@ Amber::Server.configure do
     # access_windows are split like rails shallow routing with the defined resource and next 3 lines
     get "/guests/:guest_id/access_windows", AccessWindowController, :index
     get "/guests/:guest_id/access_windows/new", AccessWindowController, :new
-    post "/guests/:guest_id/access_window", AccessWindowController, :create
+    post "/guests/:guest_id/access_windows", AccessWindowController, :create
     get "/w/:slug", GuestDeviceController, :show
     get "/profile", UserController, :show
     get "/profile/edit", UserController, :edit
