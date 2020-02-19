@@ -15,7 +15,7 @@ services:
   app:
     build: .
     image: guest_control
-    command: ["./wait-for-it.sh", "db:5432", "--", "amber", "watch"]
+    command: ["./wait-for-it.sh", "db:5432", "--", "./app-start.sh"]
     environment:
       <<: *shared-app-envs
     ports:

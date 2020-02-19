@@ -2,8 +2,10 @@ class HTTP::Server::Context
   property current_user : User?
 end
 
+# NOTE: Matches are on both PUBLIC_PATHS and "/w" for the client endpoint
+
 class Authenticate < Amber::Pipe::Base
-  PUBLIC_PATHS = ["/", "/signin", "/session", "/signup", "/registration"]
+  PUBLIC_PATHS = ["/", "/signin", "/session", "/signup", "/registration", "/ws/devices"]
 
   def call(context)
     user_id = context.session["user_id"]?
@@ -19,7 +21,7 @@ class Authenticate < Amber::Pipe::Base
   end
 
   private def public_path?(path)
-    PUBLIC_PATHS.includes?(path)
+    PUBLIC_PATHS.includes?(path) || path.starts_with?("/w")
 
     # Different strategies can be used to determine if a path is public
     # Example, if /admin/* paths are the only private paths
