@@ -5,7 +5,7 @@ class AccessWindowController < ApplicationController
   getter guest = Guest.new
 
   before_action do
-    only [:index, :new, :create] { set_guest }
+    only [:index, :new, :create, :destroy] { set_guest }
     only [:show, :edit, :update, :destroy] { set_access_window }
   end
 
@@ -62,9 +62,10 @@ class AccessWindowController < ApplicationController
 
   def update
     access_window.set_attributes access_window_params.validate!
-    access_window.set_attributes(guest_id: @guest.id)
+    # access_window.set_attributes(guest_id: @guest.id)
+    @guest = access_window.guest.not_nil!
     if access_window.save
-      redirect_to action: :index, flash: {"success" => "Access Window has been updated."}
+      redirect_to "/guests/#{@guest.id}/access_windows", flash: {"success" => "Access Window has been updated."}
     else
       flash[:danger] = "Could not update Access Window!"
       render "edit.ecr"
@@ -73,7 +74,7 @@ class AccessWindowController < ApplicationController
 
   def destroy
     access_window.destroy
-    redirect_to action: :index, flash: {"success" => "Access Window has been deleted."}
+    redirect_to "/guests/#{@guest.id}/access_windows", flash: {"success" => "Access Window has been deleted."}
   end
 
   private def access_window_params

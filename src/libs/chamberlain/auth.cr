@@ -21,7 +21,8 @@ module Chamberlain
           @remote_credential.last_auth_request_at = Time.utc
           @remote_credential.save!
 
-          log_request(remote_credential: @remote_credential, body: body, code: response.status_code)
+          Amber.logger.info("Request: login#post; #{body}; status_code: #{response.status_code}")
+          # log_request(remote_credential: @remote_credential, body: body, code: response.status_code)
 
           @remote_credential
         end

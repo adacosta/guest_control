@@ -27,7 +27,8 @@ module Chamberlain
 
             @remote_credential.save!
 
-            log_request(remote_credential: @remote_credential, response_body: body, response_code: response.status_code)
+            Amber.logger.info("Request: account#get; #{body}; status_code: #{response.status_code}")
+            # log_request(remote_credential: @remote_credential, response_body: body, response_code: response.status_code)
 
             @remote_credential
           end
