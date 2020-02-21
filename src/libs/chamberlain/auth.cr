@@ -17,8 +17,10 @@ module Chamberlain
           if json_body["SecurityToken"]
             @remote_credential.chamberlain_security_token = json_body["SecurityToken"].as_s
           end
+          Amber.logger.info("Chamberlain::Auth@#login chamberlain_security_token = #{@remote_credential.chamberlain_security_token.to_s}")
 
           @remote_credential.last_auth_request_at = Time.utc
+          Amber.logger.info("Chamberlain::Auth@#login setting last_auth_request_at to = #{@remote_credential.last_auth_request_at.to_s}")
           @remote_credential.save!
 
           Amber.logger.info("Request: login#post; #{body}; status_code: #{response.status_code}")
